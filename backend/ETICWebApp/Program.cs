@@ -39,7 +39,7 @@ app.MapGet("/todos", (ITasksService service) => service.GetTodos());
 // Get matching todos
 app.MapGet("/todos/{id}", Results<Ok<Todo>, NotFound> (int id, ITasksService service) => {
     var targetTodo = service.GetTodoById(id);
-    
+
     if (targetTodo == null) {
         return TypedResults.NotFound(); // 404 HTTPS status code
     } else {

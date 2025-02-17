@@ -1,8 +1,8 @@
 ### Get all todos
-GET http://localhost:5287/todos
+GET http://localhost:5000/todos
 
 ### Create a new todo
-POST http://localhost:5287/todos
+POST http://localhost:5000/todos
 content-type: application/json
 
 {
