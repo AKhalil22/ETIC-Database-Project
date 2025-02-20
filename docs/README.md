@@ -5,7 +5,7 @@ ASP.NET REST API with MSSQL and Python integration for ETIC project
  - **ASP.NET RESTful API** with **MSSQL** database
  - **Python Client** that interacts with the API via CRUD operations
 
-[![Lucidspark Chart](docs/lucidspark-chart.jpg)](https://lucid.app/lucidchart/8cd5f38c-9247-4c70-ac44-19bb6f1d3266/edit?viewport_loc=-3558%2C-1755%2C3757%2C1764%2C0_0&invitationId=inv_15b414e5-8086-49a0-a558-516344e0969d)
+[![Lucidspark Chart](docs/lucidspark-chart.png)](https://lucid.app/lucidchart/8cd5f38c-9247-4c70-ac44-19bb6f1d3266/edit?viewport_loc=-3558%2C-1755%2C3757%2C1764%2C0_0&invitationId=inv_15b414e5-8086-49a0-a558-516344e0969d)
 
 ## Requirements
 - [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
