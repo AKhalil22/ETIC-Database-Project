@@ -1,19 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace SpendSmart.Models
 {
     public class SpendSmartDBContext : DbContext
     {
-        public IConfiguration _config { get; set; }
-
-        public SpendSmartDBContext(IConfiguration config)
+        public SpendSmartDBContext(DbContextOptions<SpendSmartDBContext> options)
+            : base(options)
         {
-            _config = config;
-        }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(_config.GetConnectionString("DatabaseConnection"));
         }
 
         public DbSet<Expense> Expenses { get; set; }

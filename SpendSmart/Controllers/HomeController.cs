@@ -1,85 +1,67 @@
-using System.Diagnostics;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SpendSmart.Models;
+using SpendSmart.Dtos.Expense;
 
-namespace SpendSmart.Controllers;
+// Async = Asynchronous Programming = Allows the program to run other tasks while waiting for the response
+// Await = Pauses the execution of the method until the awaited task completes
 
-public class HomeController : Controller
+namespace SpendSmart.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
-    private readonly SpendSmartDBContext _context;
-
-    public HomeController(ILogger<HomeController> logger, SpendSmartDBContext context)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class HomeController : ControllerBase // Controller inherics ControllerBase
     {
-        _logger = logger;
-        _context = context;
-    }
+        private readonly ILogger<HomeController> _logger;
+        private readonly SpendSmartDBContext _context;
 
-    public IActionResult Index()
-    {
-        return View();
-    }
-
-    public IActionResult Privacy() 
-    {
-        return View();
-    }
-
-    public IActionResult Expenses()
-    {
-        var allExpenses = _context.Expenses.ToList();
-        return View(allExpenses);
-    }
-
-    public IActionResult CreateEditExpense(int? id)
-    {
-
-        if (id != null)
+        // Constructor
+        public HomeController(ILogger<HomeController> logger, SpendSmartDBContext context)
         {
-            //loading an expense by id
-            var expenseInDB = _context.Expenses.SingleOrDefault(expense => expense.Id == id);
-            return View(expenseInDB);
+            _logger = logger;
+            _context = context;
         }
 
-
-        return View();
-    }
-
-    public IActionResult CreateEditExpenseForm(Expense model)
-    {
-        if (model.Id == 0)
+        [HttpGet("expenses")] // GET (Read): api/Home/expenses
+        public async Task<IActionResult> GetAllExpenses() 
         {
-            // Create new expense
-            _context.Expenses.Add(model);
+            return await _context.Expenses.ToListAsync(); // Returns all expenses via Defered Execution
         }
-        else
+
+        [HttpGet("expense/{id}")] // GET (Read): api/Home/expense/#id
+        public async Task<IActionResult> GetExpense([FromRoute] int id) // FromRoute = Binds the value from the route
         {
-            // Editing an existing expense
-            var existingExpense = _context.Expenses.Find(model.Id);
-            if (existingExpense != null)
+            var expense = await _context.Expenses.FindAsync(id); // Retrieve the the expense with the specified id from the database
+
+            if (expense == null)
             {
-                _context.Entry(existingExpense).CurrentValues.SetValues(model);
+                return NotFound(); // Returns a 404 Not Found response
             }
+
+            return Ok(expense); // Returns a 200 OK response along with the expense
         }
 
-        _context.SaveChanges();
+        [HttpPost] // POST (Create): api/Home
+        public async Task<IActionResult> CreateExpense([FromBody] CreateExpenseRequestDto expenseDto)
+        {
+            // Convert DTO to Model
+            var expenseModel = expenseDto.ToExpense();
 
-        return RedirectToAction("Expenses");
-    }
+            // Create expense via the repository (Data Access Layer)
+            await _context.Expenses.AddAsync(expenseModel);
+
+            // Save changes to the database
+            await _context.SaveChangesAsync();
 
 
-    public IActionResult DeleteExpense(int id)
-    {
-        var expenseInDB = _context.Expenses.SingleOrDefault(expense => expense.Id == id);
-        _context.Expenses.Remove(expenseInDB);
-        _context.SaveChanges();
+        }
 
-        return RedirectToAction("Expenses");
-    }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
