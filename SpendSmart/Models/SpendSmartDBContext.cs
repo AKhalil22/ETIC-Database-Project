@@ -3,7 +3,7 @@
 namespace SpendSmart.Models
 {
     // db context to conect to db and perform CRUD operations
-    // extends DbContext class to use its methods
+    // extends DbContext class to use its methods 
     public class SpendSmartDBContext : DbContext
     {
         public IConfiguration _config { get; set; }

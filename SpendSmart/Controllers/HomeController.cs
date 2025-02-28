@@ -6,7 +6,7 @@ namespace SpendSmart.Controllers
 {
     [Route("api/home")] // route for the controller
     [ApiController]
-    public class HomeController : ControllerBase
+    public class HomeController : ControllerBase 
     {
 
         // dependency injection of SpendSmartDBContext to 
