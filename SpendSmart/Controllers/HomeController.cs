@@ -1,85 +1,96 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SpendSmart.Models;
 
-namespace SpendSmart.Controllers;
-
-public class HomeController : Controller
+namespace SpendSmart.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
-    private readonly SpendSmartDBContext _context;
-
-    public HomeController(ILogger<HomeController> logger, SpendSmartDBContext context)
-    {
-        _logger = logger;
-        _context = context;
-    }
-
-    public IActionResult Index()
-    {
-        return View();
-    }
-
-    public IActionResult Privacy() 
-    {
-        return View();
-    }
-
-    public IActionResult Expenses()
-    {
-        var allExpenses = _context.Expenses.ToList();
-        return View(allExpenses);
-    }
-
-    public IActionResult CreateEditExpense(int? id)
+    [Route("api/home")] // route for the controller
+    [ApiController]
+    public class HomeController : ControllerBase
     {
 
-        if (id != null)
+        // dependency injection of SpendSmartDBContext to 
+
+        private readonly SpendSmartDBContext _context;
+
+        public HomeController(SpendSmartDBContext context)
         {
-            //loading an expense by id
-            var expenseInDB = _context.Expenses.SingleOrDefault(expense => expense.Id == id);
-            return View(expenseInDB);
+            _context = context;
         }
 
 
-        return View();
-    }
-
-    public IActionResult CreateEditExpenseForm(Expense model)
-    {
-        if (model.Id == 0)
+        //  GET request for testing 
+        [HttpGet("test")]
+        public IActionResult Test()
         {
-            // Create new expense
-            _context.Expenses.Add(model);
+            return Ok(new { message = "Connection Sucessful!" });
         }
-        else
+
+
+        // GET request to retrieve all expenses
+        [HttpGet("expenses")]
+        public async Task<IActionResult> GetAllExpenses()
         {
-            // Editing an existing expense
-            var existingExpense = _context.Expenses.Find(model.Id);
-            if (existingExpense != null)
+
+            // getting all expenses from the db
+            var expenses = await _context.Expenses.ToListAsync();
+            return Ok(expenses);
+        }
+
+
+        // POST request to create a new expense
+        [HttpPost("create-expense")]
+        public IActionResult CreateExpense([FromBody] Expense expense)
+        {
+            if (expense == null)
             {
-                _context.Entry(existingExpense).CurrentValues.SetValues(model);
+                return BadRequest("Expense data is required.");
             }
+
+            // Add the new expense to the db
+            _context.Expenses.Add(expense);
+            _context.SaveChanges();
+
+            return Ok(new {message = "Expense Added"});
         }
 
-        _context.SaveChanges();
+        // PUT request to update an existing expense
+        [HttpPut("update-expense/{id}")]
+        public IActionResult UpdateExpense(int id, [FromBody] Expense expense)
+        {
+            if (expense == null)
+            {
+                return BadRequest("Expense data is required."); 
+            }
+            var existingExpense = _context.Expenses.Find(id);
+            if (existingExpense == null)
+            {
+                return NotFound("Expense not found.");
+            }
 
-        return RedirectToAction("Expenses");
-    }
+            // setting new values for existing expense and saving to db
+            existingExpense.Value = expense.Value;
+            existingExpense.Description = expense.Description;
+            _context.SaveChanges();
+            return Ok(new { message = "Expense Updated" });
+        }
 
 
-    public IActionResult DeleteExpense(int id)
-    {
-        var expenseInDB = _context.Expenses.SingleOrDefault(expense => expense.Id == id);
-        _context.Expenses.Remove(expenseInDB);
-        _context.SaveChanges();
+        // DELETE request to delete an existing expense
+        [HttpDelete("delete-expense/{id}")]
+        public IActionResult DeleteExpense(int id)
+        {
+            var expense = _context.Expenses.Find(id);
+            if (expense == null)
+            {
+                return NotFound("Expense not found.");
+            }
 
-        return RedirectToAction("Expenses");
-    }
+            // removing expense from db
+            _context.Expenses.Remove(expense);
+            _context.SaveChanges();
+            return Ok(new { message = "Expense Deleted" });
+        }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

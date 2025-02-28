@@ -30,6 +30,10 @@ namespace SpendSmart
             app.UseRouting();
             app.UseAuthorization();
 
+            // Map API controllers first (for API routes)
+            app.MapControllers();
+
+            // Map MVC routes for view-based actions
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
