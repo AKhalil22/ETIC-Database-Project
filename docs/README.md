@@ -27,6 +27,13 @@ dotnet restore
 cd ETIC-Database-Project
 dotnet ef database update
 ```
+3b. Update DefaultConnection String under Api > appsetting.json, replacing the Server and Database values with your own
+```json
+"ConnectionStrings": {
+	"DefaultConnection": "Server=localhost;Database=ETICDatabase;Trusted_Connection=True;MultipleActiveResultSets=true"
+  }
+```
+
 4. Install the Python client
 ```bash
 cd ETIC-Database-Project/client
