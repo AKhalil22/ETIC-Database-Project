@@ -1,67 +1,98 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using api.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SpendSmart.Models;
-using SpendSmart.Dtos.Expense;
-
-// Async = Asynchronous Programming = Allows the program to run other tasks while waiting for the response
-// Await = Pauses the execution of the method until the awaited task completes
+using System.Threading.Tasks;
 
 namespace SpendSmart.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/home")] // route for the controller
     [ApiController]
-    public class HomeController : ControllerBase // Controller inherics ControllerBase
+    public class HomeController : ControllerBase
     {
-        private readonly ILogger<HomeController> _logger;
+        // Dependency Injection of SpendSmartDBContext to access the db
+        // Preventing direct access to the database
         private readonly SpendSmartDBContext _context;
-
-        // Constructor
-        public HomeController(ILogger<HomeController> logger, SpendSmartDBContext context)
+        public HomeController(SpendSmartDBContext context)
         {
-            _logger = logger;
             _context = context;
         }
 
-        [HttpGet("expenses")] // GET (Read): api/Home/expenses
-        public async Task<IActionResult> GetAllExpenses() 
+        // GET request for testing 
+        [HttpGet("test")]
+        public Task<IActionResult> Test()
         {
-            return await _context.Expenses.ToListAsync(); // Returns all expenses via Defered Execution
+            return Task.FromResult<IActionResult>(Ok(new { message = "Connection Sucessful!" }));
         }
 
-        [HttpGet("expense/{id}")] // GET (Read): api/Home/expense/#id
-        public async Task<IActionResult> GetExpense([FromRoute] int id) // FromRoute = Binds the value from the route
+        // GET (Read) request to retrieve all expenses
+        [HttpGet("expenses")]
+        public async Task<IActionResult> GetAllExpenses()
         {
-            var expense = await _context.Expenses.FindAsync(id); // Retrieve the the expense with the specified id from the database
+            var expenses = await _context.Expenses.ToListAsync();
+            return Ok(expenses);
+        }
+
+        // POST (Create) request to create a new expense
+        [HttpPost("create-expense")]
+        public async Task<IActionResult> CreateExpense([FromBody] Expense expense)
+        {
+            if (expense == null)
+            {
+                return BadRequest("Expense data is required.");
+            }
+
+            // Add the new expense to the db
+            await _context.Expenses.AddAsync(expense);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Expense Added" });
+        }
+
+        // PUT (Update) request to update an existing expense
+        [HttpPut("update-expense/{id}")]
+        public async Task<IActionResult> UpdateExpense(int id, [FromBody] Expense expense)
+        {
+            if (expense == null)
+            {
+                return BadRequest("Expense data is required.");
+            }
+
+            var existingExpense = await _context.Expenses.FirstOrDefaultAsync(expense => expense.Id == id);
+
+            if (existingExpense == null)
+            {
+                return NotFound("Expense not found.");
+            }
+
+            // Update Expense
+            existingExpense.Value = expense.Value;
+            existingExpense.Description = expense.Description;
+
+            // Save the changes to the database
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Expense Updated" });
+        }
+
+
+        // DELETE request to delete an existing expense
+        [HttpDelete("delete-expense/{id}")]
+        public async Task<IActionResult> DeleteExpense(int id)
+        {
+            var expense = await _context.Expenses.FirstOrDefaultAsync(expense => expense.Id == id);
 
             if (expense == null)
             {
-                return NotFound(); // Returns a 404 Not Found response
+                return NotFound("Expense not found.");
             }
 
-            return Ok(expense); // Returns a 200 OK response along with the expense
-        }
+            // removing expense from db
+            _context.Expenses.Remove(expense);
 
-        [HttpPost] // POST (Create): api/Home
-        public async Task<IActionResult> CreateExpense([FromBody] CreateExpenseRequestDto expenseDto)
-        {
-            // Convert DTO to Model
-            var expenseModel = expenseDto.ToExpense();
-
-            // Create expense via the repository (Data Access Layer)
-            await _context.Expenses.AddAsync(expenseModel);
-
-            // Save changes to the database
             await _context.SaveChangesAsync();
 
-
+            return Ok(new { message = "Expense Deleted" });
         }
-
 
     }
 }

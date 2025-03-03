@@ -1,14 +1,16 @@
-using Microsoft.EntityFrameworkCore;
 using SpendSmart.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen; // Debugging UI for Swagger
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Initialize the swagger debugger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
