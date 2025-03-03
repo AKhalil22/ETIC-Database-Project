@@ -23,16 +23,26 @@ cd ETIC-Database-Project
 dotnet restore
 ```
 3. Install the MSSQL database
-```bash
-cd ETIC-Database-Project
-dotnet ef database update
-```
+
 3b. Update DefaultConnection String under Api > appsetting.json, replacing the Server and Database values with your own
 ```json
 "ConnectionStrings": {
 	"DefaultConnection": "Server=localhost;Database=ETICDatabase;Trusted_Connection=True;MultipleActiveResultSets=true"
   }
 ```
+3c. Initialize database connection: Method 1
+```bash
+cd ETIC-Database-Project/Api
+dotnet ef database update
+```
+Should look like this:
+![Success Message](../docs/SucessMessage.png)
+
+Then run:
+```bash
+dotnet ef database update
+```
+Refresh your database & dbo.Expenses should be created within your database! 
 
 4. Install the Python client
 ```bash
