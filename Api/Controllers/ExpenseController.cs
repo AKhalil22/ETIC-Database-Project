@@ -44,8 +44,7 @@ namespace Api.Contollers
             return CreatedAtAction(nameof(GetById), new { id = expense.Id }, expense); // Return 201 Created
         }
 
-        [HttpPut] // Put (Update): api/expense
-        [Route("{id}")]
+        [HttpPut("{id}")] // Put (Update): api/expense/{id}
         public async Task<IActionResult> UpdateExpense([FromRoute] int id, [FromBody] Expense expense)
         {
             if (id != expense.Id)
