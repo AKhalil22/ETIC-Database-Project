@@ -33,7 +33,7 @@ dotnet restore
 3c. Initialize database connection: Method 1
 ```bash
 cd ETIC-Database-Project/Api
-dotnet ef database update
+dotnet ef migrations add Init
 ```
 Should look like this:
 ![Success Message](../docs/SucessMessage.png)
