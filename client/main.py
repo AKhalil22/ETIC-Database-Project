@@ -9,7 +9,6 @@ BASE_URL = "http://localhost:5245/api/expense"
 def checkResponse(response, routeName):
     if response.status_code == 404:
         print(f"@{routeName} - Error: {json.dumps(response.json(), indent=2)}\n")
-        sys.exit()
     elif response.status_code == 204:
         print(f"@{routeName} Success: Expense Updated.\n")
 
@@ -22,7 +21,7 @@ def checkResponse(response, routeName):
             print(f"@{routeName} - Success: {response.text}\n")
     else:
         print(f"@{routeName} - Error: Check Server Logs.\n")
-        sys.exit()
+        
 
 
 # GET all expenses
