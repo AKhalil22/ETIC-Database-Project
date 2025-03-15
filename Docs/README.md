@@ -30,7 +30,7 @@ dotnet restore
 Update DefaultConnection String under Api > appsetting.json, replacing the Server and Database values with your own
 ```json
 "ConnectionStrings": {
-	"DefaultConnection": "Server=localhost;Database=ETICDatabase;Trusted_Connection=True;MultipleActiveResultSets=true"
+	"DefaultConnection": "Data Source={PCNAME}\\SQLEXPRESS;Initial Catalog={DATABASENAME};Trusted_Connection=True;MultipleActiveResultSets=true"
   }
 ```
 
