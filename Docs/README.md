@@ -38,7 +38,7 @@ Initialize database connection
 ```bash
 dotnet tool install --global dotnet-ef
 cd Api
-dotnet ef migrations add Init
+dotnet ef migrations add init
 ```
 
 Should look like this:
@@ -50,16 +50,16 @@ dotnet ef database update
 ```
 Refresh your database & dbo.Expenses should be created within your database! 
 
-#### 4. Install Python Client Requirements & Run
+Run API:
 ```bash
-cd ..
+dotnet run
+```
+
+#### 4. Install Python Client Requirements & Run
+In a new terminal:
+```bash
 cd Client
 pip install -r requirements.txt
 python main.py
 ```
 
-#### 5. Run the API
-```bash
-cd ETIC-Database-Project
-dotnet run
-```
