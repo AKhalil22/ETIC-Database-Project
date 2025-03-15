@@ -37,7 +37,7 @@ Update DefaultConnection String under Api > appsetting.json, replacing the Serve
 Initialize database connection
 ```bash
 dotnet tool install --global dotnet-ef
-cd ETIC-Database-Project/Api
+cd Api
 dotnet ef migrations add Init
 ```
 
@@ -52,7 +52,8 @@ Refresh your database & dbo.Expenses should be created within your database!
 
 #### 4. Install Python Client Requirements & Run
 ```bash
-cd ETIC-Database-Project/client
+cd ..
+cd Client
 pip install -r requirements.txt
 python main.py
 ```
