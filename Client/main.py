@@ -1,4 +1,4 @@
-import requests # type: ignore
+import requests
 import json
 import sys
 
@@ -21,8 +21,7 @@ def checkResponse(response, routeName):
             print(f"@{routeName} - Success: {response.text}\n")
     else:
         print(f"@{routeName} - Error: Check Server Logs.\n")
-
-
+        
 # GET all expenses
 def getExpenses():
     response = requests.get(BASE_URL) # adds /expense endpoint
