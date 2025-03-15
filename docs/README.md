@@ -32,6 +32,7 @@ dotnet restore
 ```
 3c. Initialize database connection: Method 1
 ```bash
+dotnet tool install --global dotnet-ef
 cd ETIC-Database-Project/Api
 dotnet ef migrations add Init
 ```
