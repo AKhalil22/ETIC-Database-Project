@@ -22,7 +22,7 @@ namespace Api.Contollers
             return Ok(expenses); // Return all expenses
         }
 
-        [HttpGet("{id}")] // Get (Read): api/expense/{id}
+        [HttpGet("id/{id}")] // Get (Read): api/expense/{id}
         public async Task<IActionResult> GetById([FromRoute] int id)
         { 
             var expense = await _context.Expenses.FindAsync(id); // Find expense by id
@@ -34,6 +34,37 @@ namespace Api.Contollers
 
             return Ok(expense); // Return expense
         }
+
+        [HttpGet("description/{description}")]
+public async Task<IActionResult> SearchByDescription([FromRoute] string description)
+{
+    var expenses = await _context.Expenses
+        .Where(e => e.Description.Contains(description))
+        .ToListAsync();
+
+    if (expenses == null || !expenses.Any())
+    {
+        return NotFound("No expenses match the given description.");
+    }
+
+    return Ok(expenses);
+}
+
+[HttpGet("amount/{amount}")]
+public async Task<IActionResult> SearchByAmount([FromRoute] decimal amount)
+{
+    var expenses = await _context.Expenses
+        .Where(e => e.Amount == amount)
+        .ToListAsync();
+
+    if (expenses == null || !expenses.Any())
+    {
+        return NotFound("No expenses match the given amount.");
+    }
+
+    return Ok(expenses);
+}
+
 
         [HttpPost] // Post (Create): api/expense
         public async Task<IActionResult> CreateExpense([FromBody] Expense expense)
