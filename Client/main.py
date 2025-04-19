@@ -29,8 +29,18 @@ def getExpenses():
 
 # Get expense by ID
 def getExpenseById(id): # expects id parameter
-    response = requests.get(BASE_URL+f"/{id}") # adds /get-expense/{id} endpoint
+    response = requests.get(BASE_URL+f"/id/{id}") # adds /get-expense/{id} endpoint
     checkResponse(response, "getExpenseById")
+
+    # Get expense by Amount
+def getExpenseByAmount(amount): # expects amount parameter
+    response = requests.get(BASE_URL+f"/amount/{amount}") 
+    checkResponse(response, "getExpenseByAmount")
+
+    # Get expense by Description
+def getExpenseByDescription(description): # expects description parameter
+    response = requests.get(BASE_URL+f"/description/{description}") 
+    checkResponse(response, "getExpenseByDescription")
 
 # POST request to create new expense
 def createExpense(new_expense): # expects new expense json parameter
@@ -57,8 +67,19 @@ def run():
             getExpenses()
 
         elif user_input == 2:
-            id = input("Enter ID: ")
-            getExpenseById(id)
+            search_input = input("Choose an option:\n1. Get by ID\n2. Get by Amount\n3. Get by Description\n")
+            search_input = int(search_input)
+            if search_input == 1:
+                id = input("Enter ID: ")
+                getExpenseById(id)
+
+            elif search_input == 2: 
+                amount = input("Enter Amount: ")
+                getExpenseByAmount(amount)
+
+            elif search_input == 3: 
+                description = input("Enter Description: ")
+                getExpenseByDescription(description)
 
         elif user_input == 3:
             description = input("Enter Description: ")
