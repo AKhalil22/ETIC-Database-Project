@@ -8,7 +8,10 @@ BASE_URL = "http://localhost:5245/api/expense"
 # Check reponse status code and print response
 def checkResponse(response, routeName):
     if response.status_code == 404:
-        print(f"@{routeName} - Error: {json.dumps(response.json(), indent=2)}\n")
+        try:
+            print(f"@{routeName} - Success: {json.dumps(response.json(), indent=2)}\n")
+        except json.JSONDecodeError:
+            print(f"@{routeName} - Success: {response.text}\n")
     elif response.status_code == 204:
         print(f"@{routeName} Success: Expense Updated.\n")
 
@@ -60,14 +63,14 @@ def deleteExpense(id): # expects id parameter
 # Allow users to perform CRUD operations with inputs
 def run():
     while True:
-        user_input = input("1. Get All Expenses\n2. Get Expense by Id\n3. Create New Expense\n4. Update Expense\n5. Delete Expense\n6. Exit\n\n" ) # Command list for CRUD operations
+        user_input = input("1. Get All Expenses\n2. Get Expense by Attribute\n3. Create New Expense\n4. Update Expense\n5. Delete Expense\n6. Exit\n\n" ) # Command list for CRUD operations
         user_input = int(user_input) # Cast user input to int
 
         if user_input == 1:
             getExpenses()
 
         elif user_input == 2:
-            search_input = input("Choose an option:\n1. Get by ID\n2. Get by Amount\n3. Get by Description\n")
+            search_input = input("Choose an attribute:\n1. Get by ID\n2. Get by Amount\n3. Get by Description\n")
             search_input = int(search_input)
             if search_input == 1:
                 id = input("Enter ID: ")
